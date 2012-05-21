@@ -31,22 +31,22 @@
 	<property name="install.prefix" value="/usr/local" />
 	<property name="install.destdir" value="/" />
 
-	<property name="install.share" value="${path::combine(install.prefix,'share')}" />
-	<property name="install.bindir" value="${path::combine(install.prefix,'bin')}" />
-	<property name="install.libdir" value="${path::combine(install.prefix,'lib')}" />
-	<property name="install.docsdir" value="${path::combine(install.prefix, docs.dir)}" />
-	<property name="install.examplesdir" value="${path::combine(install.prefix, examples.dir)}" />
-	<property name="install.boolib" value="${path::combine(install.libdir,'boo')}" />
-	<property name="install.boodocs" value="${path::combine(install.docsdir,'boo')}" />
-	<property name="install.booexamples" value="${path::combine(install.examplesdir,'boo')}" />
+	<property name="install.share" value="${path::combine(install.prefix,'share')}" dynamic="true" />
+	<property name="install.bindir" value="${path::combine(install.prefix,'bin')}" dynamic="true" />
+	<property name="install.libdir" value="${path::combine(install.prefix,'lib')}" dynamic="true" />
+	<property name="install.docsdir" value="${path::combine(install.prefix, docs.dir)}" dynamic="true" />
+	<property name="install.examplesdir" value="${path::combine(install.prefix, examples.dir)}" dynamic="true" />
+	<property name="install.boolib" value="${path::combine(install.libdir,'boo')}" dynamic="true" />
+	<property name="install.boodocs" value="${path::combine(install.docsdir,'boo')}" dynamic="true" />
+	<property name="install.booexamples" value="${path::combine(install.examplesdir,'boo')}" dynamic="true" />
 
-	<property name="fakeroot" value="${install.destdir}" />
-	<property name="fakeroot.boolib" value="${install.destdir}/${install.boolib}" />
-	<property name="fakeroot.boodocs" value="${install.destdir}/${install.boodocs}" />
-	<property name="fakeroot.booexamples" value="${install.destdir}/${install.booexamples}" />
-	<property name="fakeroot.bindir" value="${install.destdir}/${install.bindir}" />
-	<property name="fakeroot.libdir" value="${install.destdir}/${install.libdir}" />
-	<property name="fakeroot.share" value="${install.destdir}/${install.share}" />
+	<property name="fakeroot" value="${install.destdir}" dynamic="true" />
+	<property name="fakeroot.boolib" value="${install.destdir}/${install.boolib}" dynamic="true" />
+	<property name="fakeroot.boodocs" value="${install.destdir}/${install.boodocs}" dynamic="true" />
+	<property name="fakeroot.booexamples" value="${install.destdir}/${install.booexamples}" dynamic="true" />
+	<property name="fakeroot.bindir" value="${install.destdir}/${install.bindir}" dynamic="true" />
+	<property name="fakeroot.libdir" value="${install.destdir}/${install.libdir}" dynamic="true" />
+	<property name="fakeroot.share" value="${install.destdir}/${install.share}" dynamic="true" />
 
 	<!-- set gendarme.dir in your build.properties to enable Gendarme report after build -->
 	<property name="gendarme.dir" value=""/>
@@ -243,11 +243,12 @@
 			</copy>
 		</if>
 
+		<!--
 		<boo>
 		print("Hello from boo task!")		
 		print("Framework directory: ${Project.TargetFramework.FrameworkAssemblyDirectory}")
 		</boo>
-
+		-->
 	</target>
 	
 	<target name="dump-properties" depends="core">
@@ -569,8 +570,11 @@
 
 		<property name="sharedmime.prefix" value="${pkg-config::get-variable('shared-mime-info','prefix')}" />
 		<property name="fakeroot.sharedmime" value="${fakeroot}/${sharedmime.prefix}" />
-		<property name="gsv.prefix" value="${pkg-config::get-variable(gsv.name,'prefix')}" />
-		<property name="fakeroot.gsv" value="${fakeroot}/${gsv.prefix}" />
+
+		<property name="gsv.prefix" value="" />
+		<property name="fakeroot.gsv" value="" />
+		<property name="gsv.prefix" value="${pkg-config::get-variable(gsv.name,'prefix')}" failonerror="false" />
+		<property name="fakeroot.gsv" value="${fakeroot}/${gsv.prefix}" if="${gsv.prefix != ''}" />
 
 		<mkdir dir="${fakeroot.boolib}"/>
 		<mkdir dir="${fakeroot.bindir}"/>
@@ -618,7 +622,7 @@
 			</fileset>
 		</copy>
 		
-		<copy file="extras/boo.lang" todir="${fakeroot.gsv}/share/${gsv.name}/language-specs/" />
+		<copy file="extras/boo.lang" todir="${fakeroot.gsv}/share/${gsv.name}/language-specs/" if="${fakeroot.gsv != ''}" />
 		<copy file="${build.dir}/boo.pc" todir="${fakeroot.libdir}/pkgconfig/" />
 		<copy file="extras/boo-mime-info.xml" todir="${fakeroot.sharedmime}/share/mime/packages/" />
 
