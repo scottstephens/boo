@@ -24,6 +24,25 @@ to rebuild everything from scratch:
 the rebuild target will also cause the ast classes and parser
 to be regenerated (needs a java vm).
 
+Installation
+============
+NAnt can be used to install as well as compile.  By default, 
+boo will be installed to /usr/local.  To modify this, create
+a build.properties file, like so:
+
+cat > buld.properties
+<project name="build properties">
+	<property name="install.prefix" value="/opt/local" />
+</project>
+
+For Mac OS X, you may with the installation directory to be
+/Library/Frameworks/Mono.framework/Versions/Current
+
+Depending on the installation path you choose, you may need
+to run NAnt with super-user priveleges for installation:
+
+sudo nant
+
 How to Start
 ============
 
