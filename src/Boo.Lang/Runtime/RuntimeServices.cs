@@ -669,23 +669,20 @@ namespace Boo.Lang.Runtime
 			}
 		}
 
-		public static Array GetMultiDimensionalRange1(Array source, int[] ranges, bool[] compute_end)
+		public static Array GetMultiDimensionalRange1(Array source, int[] ranges, bool[] compute_end, bool[] collapse)
 		{
 			int rankSrc = source.Rank;
 			int[] lensSrc = new int[rankSrc];
-			bool[] collapse = new bool[rankSrc];
 			int collapseSize = 0;	
 			for (int i = 0; i < rankSrc; i++)
 			{
-				if (compute_end[i]) 
-				{
-					ranges[2*i + 1] = source.GetLength(i);	
-				}
 				ranges[2 * i] = NormalizeIndex(source.GetLength(i), ranges[2 * i]);
-				ranges[2 * i + 1] = NormalizeIndex(source.GetLength(i), ranges[2 * i + 1]);
+				if (compute_end[i]) 
+					ranges[2*i + 1] = source.GetLength(i);	
+				else 
+					ranges[2 * i + 1] = NormalizeIndex(source.GetLength(i), ranges[2 * i + 1]);					
 
 				lensSrc[i] = ranges[2 * i + 1] - ranges[2 * i];
-				collapse[i] = lensSrc[i] == 1;
 				collapseSize += collapse[i] ? 1 : 0;
 			}
 			

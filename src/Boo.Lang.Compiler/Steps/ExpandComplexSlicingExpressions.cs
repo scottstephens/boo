@@ -77,6 +77,7 @@ namespace Boo.Lang.Compiler.Steps
 			{
 				MethodInvocationExpression mie = null;
 				var compute_end = new ArrayLiteralExpression();
+				var collapse = new ArrayLiteralExpression();
 				var ranges = new ArrayLiteralExpression();
 				for (int i = 0; i < node.Indices.Count; i++)
 				{
@@ -89,6 +90,7 @@ namespace Boo.Lang.Compiler.Steps
 						ranges.Items.Add(end);
 						BindExpressionType(end, GetExpressionType(node.Indices[i].Begin));
 						compute_end.Items.Add(new BoolLiteralExpression(false));
+						collapse.Items.Add(new BoolLiteralExpression(true));
 					}
 					else if (node.Indices[i].End == OmittedExpression.Default)
 					{
@@ -96,18 +98,22 @@ namespace Boo.Lang.Compiler.Steps
 						ranges.Items.Add(end);
 						BindExpressionType(end, GetExpressionType(node.Indices[i].Begin));
 						compute_end.Items.Add(new BoolLiteralExpression(true));
+						collapse.Items.Add(new BoolLiteralExpression(false));
 					}
 					else
 					{
 						ranges.Items.Add(node.Indices[i].End);
 						compute_end.Items.Add(new BoolLiteralExpression(false));
+						collapse.Items.Add(new BoolLiteralExpression(false));
 					}
 				}
 				mie = CodeBuilder.CreateMethodInvocation(MethodCache.RuntimeServices_GetMultiDimensionalRange1, node.Target, ranges);
 				mie.Arguments.Add(compute_end);
+				mie.Arguments.Add(collapse);
 
 				BindExpressionType(ranges, TypeSystemServices.Map(typeof(int[])));
 				BindExpressionType(compute_end, TypeSystemServices.Map(typeof(bool[])));
+				BindExpressionType(collapse, TypeSystemServices.Map(typeof(bool[])));
 				node.ParentNode.Replace(node, mie);
 			}
 			else

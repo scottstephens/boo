@@ -9,8 +9,8 @@ namespace QuickTests
 	{
 		public static void Main (string[] args)
 		{
-			BooCompiler compiler = new BooCompiler();
 			
+			BooCompiler compiler = new BooCompiler();
 			
 			var p = new Boo.Lang.Compiler.Pipelines.CompileToMemory();
 			var xml_step = new Boo.Lang.Compiler.Steps.SerializeToXml();
